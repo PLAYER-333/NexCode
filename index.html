@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexCode - Modern Code Editor by Shaurya && Parshva</title>
+    <meta name="description" content="NexCode: A clean, hackable code editor for developers who build their own path. Lightweight, fast, and fully customizable.">
+    <meta name="author" content="Shaurya && Parshva">
+    <meta name="keywords" content="code editor, programming, development, IDE, text editor, NexCode, developer tools">
+
+    <meta property="og:title" content="NexCode - Modern Code Editor">
+    <meta property="og:description" content="A clean, hackable code editor for developers who build their own path. Lightweight, fast, and fully customizable.">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+
+    <style>
+        :root {
+            /* Core Background & Text */
+            --background: 230 20% 9%;
+            --foreground: 210 40% 98%;
+
+            /* Card System */
+            --card: 230 15% 12%;
+            --card-foreground: 210 40% 98%;
+            --card-border: 230 10% 18%;
+
+            /* Interactive Elements */
+            --popover: 230 15% 12%;
+            --popover-foreground: 210 40% 98%;
+
+            /* Brand Colors */
+            --primary: 195 100% 50%;
+            --primary-foreground: 230 20% 9%;
+            --primary-glow: 195 100% 60%;
+
+            /* Secondary System */
+            --secondary: 230 10% 18%;
+            --secondary-foreground: 210 30% 85%;
+
+            /* Muted Elements */
+            --muted: 230 10% 15%;
+            --muted-foreground: 215 20% 65%;
+
+            /* Accent Colors */
+            --accent: 270 60% 55%;
+            --accent-foreground: 210 40% 98%;
+
+            /* Status Colors */
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 210 40% 98%;
+
+            /* Form Elements */
+            --border: 230 10% 18%;
+            --input: 230 10% 15%;
+            --ring: 195 100% 50%;
+
+            /* Gradients */
+            --gradient-hero: linear-gradient(135deg, hsl(230 20% 9%), hsl(230 15% 12%), hsl(195 40% 20%));
+            --gradient-card: linear-gradient(145deg, hsl(230 15% 12%), hsl(230 10% 15%));
+            --gradient-primary: linear-gradient(135deg, hsl(195 100% 50%), hsl(195 100% 60%));
+            --gradient-accent: linear-gradient(135deg, hsl(270 60% 55%), hsl(270 60% 65%));
+
+            /* Shadows */
+            --shadow-glow: 0 0 30px hsl(195 100% 50% / 0.3);
+            --shadow-card: 0 4px 12px hsl(230 20% 5% / 0.5);
+            --shadow-elevated: 0 8px 25px hsl(230 20% 5% / 0.6);
+
+            /* Animation */
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 0.75rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--gradient-hero);
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: hsl(var(--background) / 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid hsl(var(--card-border));
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: hsl(var(--foreground));
+            transition: var(--transition-smooth);
+        }
+
+        .logo:hover {
+            transform: translateY(-1px);
+        }
+
+        .logo-icon {
+            padding: 0.5rem;
+            background: var(--gradient-primary);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .logo:hover .logo-icon {
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            font-size: 0.875rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: hsl(var(--primary));
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: hsl(var(--primary-foreground));
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-elevated);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            border: 1px solid hsl(var(--border));
+            color: hsl(var(--foreground));
+            background: hsl(var(--card) / 0.5);
+        }
+
+        .btn-outline:hover {
+            background: hsl(var(--card));
+            border-color: hsl(var(--primary));
+        }
+
+        .btn-ghost {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .btn-ghost:hover {
+            background: hsl(var(--card) / 0.5);
+            color: hsl(var(--primary));
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        .btn-hero {
+            background: hsl(var(--card) / 0.1);
+            color: hsl(var(--foreground));
+            border: 1px solid hsl(var(--border) / 0.2);
+            backdrop-filter: blur(12px);
+        }
+
+        .btn-hero:hover {
+            background: hsl(var(--card) / 0.2);
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+        }
+
+        .hero-pattern {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, hsl(195 100% 50% / 0.1), transparent 70%);
+        }
+
+        .hero-dots {
+            position: absolute;
+            width: 0.5rem;
+            height: 0.5rem;
+            background: hsl(var(--primary));
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .hero-dot-1 { top: 5rem; left: 5rem; }
+        .hero-dot-2 { top: 10rem; right: 8rem; animation-delay: 0.5s; }
+        .hero-dot-3 { bottom: 10rem; left: 25%; animation-delay: 1s; }
+        .hero-dot-4 { bottom: 5rem; right: 5rem; animation-delay: 0.7s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero-content {
+            max-width: 64rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-brand {
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+        }
+
+        .hero-creators {
+            background: var(--gradient-accent);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 3rem;
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        @media (min-width: 640px) {
+            .hero-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: hsl(var(--primary));
+        }
+
+        .hero-stat-label {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+            background: hsl(var(--card) / 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--gradient-card);
+            border: 1px solid hsl(var(--card-border));
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: hsl(var(--card-foreground));
+        }
+
+        .feature-description {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: hsl(var(--muted-foreground));
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+
+        /* Download Section */
+        .download {
+            padding: 5rem 0;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .download-card {
+            background: var(--gradient-card);
+            border: 1px solid hsl(var(--card-border));
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition-smooth);
+        }
+
+        .download-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-elevated);
+        }
+
+        .download-icon {
+            width: 3rem;
+            height: 3rem;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .download-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: hsl(var(--card-foreground));
+        }
+
+        .download-filename {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+        }
+
+        .requirements {
+            background: var(--gradient-card);
+            border: 1px solid hsl(var(--card-border));
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .requirements h3 {
+            color: hsl(var(--card-foreground));
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .requirements ul {
+            list-style: none;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .requirements li {
+            margin-bottom: 0.5rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .requirements li::before {
+            content: "•";
+            color: hsl(var(--primary));
+            position: absolute;
+            left: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: hsl(var(--card));
+            border-top: 1px solid hsl(var(--card-border));
+            padding: 3rem 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .footer-logo-icon {
+            padding: 0.5rem;
+            background: var(--gradient-primary);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .footer-info {
+            text-align: center;
+        }
+
+        .footer-brand {
+            color: hsl(var(--card-foreground));
+            font-weight: 500;
+        }
+
+        .footer-tagline {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .footer-link {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+
+        .footer-link:hover {
+            color: hsl(var(--primary));
+        }
+
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid hsl(var(--card-border));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .footer-credits {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer-love {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+        }
+
+        .heart {
+            color: #ef4444;
+            font-size: 0.75rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 767px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+        }
+
+        /* Hidden sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Icons using text symbols */
+        .icon {
+            display: inline-block;
+            font-style: normal;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <!-- Logo -->
+                <a href="#" class="logo" onclick="showSection('home')">
+                    <div class="logo-icon">
+                        <span class="icon">⚡</span>
+                    </div>
+                    <span class="logo-text">NexCode</span>
+                </a>
+
+                <!-- Navigation Links -->
+                <div class="nav-links">
+                    <a href="#" class="nav-link active" onclick="showSection('home')" id="nav-home">Home</a>
+                    <a href="#" class="nav-link" onclick="showSection('download')" id="nav-download">Download</a>
+                    <a href="https://github.com/PLAYER-333" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
+                        <span class="icon">⚡</span>
+                        GitHub
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="mobile-menu">
+                    <button class="btn btn-ghost">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <div style="width: 1rem; height: 2px; background: currentColor;"></div>
+                            <div style="width: 1rem; height: 2px; background: currentColor;"></div>
+                            <div style="width: 1rem; height: 2px; background: currentColor;"></div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home" class="section active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <!-- Background Pattern -->
+            <div class="hero-bg">
+                <div class="hero-pattern"></div>
+                <div class="hero-dots hero-dot-1"></div>
+                <div class="hero-dots hero-dot-2"></div>
+                <div class="hero-dots hero-dot-3"></div>
+                <div class="hero-dots hero-dot-4"></div>
+            </div>
+
+            <div class="container">
+                <div class="hero-content">
+                    <!-- Main Headline -->
+                    <h1 class="hero-title">
+                        <span class="hero-brand">NexCode</span>
+                        <br>
+                        <span class="hero-subtitle">
+                            Crafted by <span class="hero-creators">Shaurya && Parshva</span>
+                        </span>
+                    </h1>
+
+                    <!-- Subtitle -->
+                    <p class="hero-description">
+                        A clean, hackable code editor for developers who build their own path.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="hero-buttons">
+                        <a href="#" class="btn btn-hero btn-lg" onclick="showSection('download')">
+                            <span class="icon">⬇</span>
+                            Download Now
+                            <span class="icon">→</span>
+                        </a>
+
+                        <button class="btn btn-outline btn-lg" onclick="scrollToFeatures()">
+                            Learn More
+                        </button>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">Fast</div>
+                            <div class="hero-stat-label">Lightning startup</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">Lightweight</div>
+                            <div class="hero-stat-label">Minimal footprint</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-value">Hackable</div>
+                            <div class="hero-stat-label">Fully customizable</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose NexCode?</h2>
+                <p class="section-subtitle">
+                    Built by developers, for developers. NexCode combines performance with flexibility.
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="icon" style="color: hsl(var(--primary-foreground)); font-size: 1.5rem;">⚡</span>
+                        </div>
+                        <h3 class="feature-title">Lightweight & Fast</h3>
+                        <p class="feature-description">
+                            Minimal resource usage with lightning-fast startup times. No bloat, just pure performance.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="icon" style="color: hsl(var(--primary-foreground)); font-size: 1.5rem;">🎨</span>
+                        </div>
+                        <h3 class="feature-title">Fully Customizable</h3>
+                        <p class="feature-description">
+                            Hackable architecture lets you modify everything. Make it truly yours with endless customization options.
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <span class="icon" style="color: hsl(var(--primary-foreground)); font-size: 1.5rem;">👥</span>
+                        </div>
+                        <h3 class="feature-title">Built by Developers</h3>
+                        <p class="feature-description">
+                            Created by developers who understand real workflow needs. Every feature serves a purpose.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Download Section -->
+    <div id="download" class="section">
+        <section class="download">
+            <div class="container">
+                <h2 class="section-title">Download NexCode</h2>
+                <p class="section-subtitle">
+                    Get NexCode for your platform and start coding with purpose.
+                </p>
+
+                <div class="download-grid">
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <span style="color: hsl(var(--primary-foreground));">🪟</span>
+                        </div>
+                        <h3 class="download-title">Windows</h3>
+                        <p class="download-filename">NexCode-x64-x32-setup.exe</p>
+                        <a href="NexCode-x64-x32-setup.exe" class="btn btn-primary">
+                            <span class="icon">⬇</span>
+                            Download for Windows
+                        </a>
+                    </div>
+
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <span style="color: hsl(var(--primary-foreground));">🐧</span>
+                        </div>
+                        <h3 class="download-title">Linux</h3>
+                        <p class="download-filename">NexCode.AppImage</p>
+                        <a href="#" class="btn btn-primary">
+                            <span class="icon">⬇</span>
+                            Download for Linux
+                        </a>
+                    </div>
+
+                    <div class="download-card">
+                        <div class="download-icon">
+                            <span style="color: hsl(var(--primary-foreground));">🍎</span>
+                        </div>
+                        <h3 class="download-title">macOS</h3>
+                        <p class="download-filename">NexCode.dmg</p>
+                        <a href="#" class="btn btn-primary">
+                            <span class="icon">⬇</span>
+                            Download for Mac
+                        </a>
+                    </div>
+                </div>
+
+                <div class="requirements">
+                    <h3>System Requirements</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h4 style="color: hsl(var(--primary)); margin-bottom: 0.5rem;">Minimum Requirements</h4>
+                            <ul>
+                                <li>2GB RAM</li>
+                                <li>1GB free disk space</li>
+                                <li>64-bit processor</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: hsl(var(--primary)); margin-bottom: 0.5rem;">Recommended</h4>
+                            <ul>
+                                <li>8GB RAM or more</li>
+                                <li>1GB free disk space</li>
+                                <li>Multi-core processor</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Logo and Info -->
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">
+                        <span class="icon" style="color: hsl(var(--primary-foreground));">⚡</span>
+                    </div>
+                    <div class="footer-info">
+                        <div class="footer-brand">NexCode</div>
+                        <div class="footer-tagline">Code with purpose</div>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div class="footer-links">
+                    <a href="#" class="footer-link" onclick="showSection('home')">Home</a>
+                    <a href="#" class="footer-link" onclick="showSection('download')">Download</a>
+                    <a href="https://github.com/PLAYER-333" target="_blank" rel="noopener noreferrer" class="footer-link">
+                        <span class="icon">⚡</span> GitHub
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-credits">
+                    <span>© 2025 Shaurya && Parshva</span>
+                    <span style="display: none;" class="hidden md:inline">•</span>
+                    <span>
+                        Released under
+                        <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer" style="color: hsl(var(--primary)); text-decoration: none;">
+                            MIT License
+                        </a>
+                    </span>
+                </div>
+
+                <div class="footer-love">
+                    <span>Made with</span>
+                    <span class="heart">♥</span>
+                    <span>for developers</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation functionality
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show requested section
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Update navigation active state
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const activeNav = document.getElementById('nav-' + sectionName);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Smooth scroll to features section
+        function scrollToFeatures() {
+            const featuresSection = document.getElementById('features');
+            if (featuresSection) {
+                featuresSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show home section by default
+            showSection('home');
+        });
+    </script>
+</body>
+</html>
